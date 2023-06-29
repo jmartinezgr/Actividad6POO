@@ -1,11 +1,13 @@
 package Interfaz;
 
 import Operaciones.AddFriend;
+import Operaciones.DisplayFriends;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class Interfaz extends JFrame implements ActionListener{
     private JMenuBar menuBar;
@@ -13,17 +15,20 @@ public class Interfaz extends JFrame implements ActionListener{
     private JMenuItem createItem,readItem, updateItem,deleteItem;
     private Container contenedor;
 
-    private JLabel nombreAmigoC,numeroAmigoC;
+    private JLabel nombreAmigoC,numeroAmigoC,nombreAmigoR,numeroAmigoR,informacion;
     private JTextField nombreAmigoCF,numeroAmigoCF;
     private AddFriend addFriend;
-    private JButton crear;
-
+    private DisplayFriends displayFriends;
+    private JButton crear,mostrar;
+    private JList<String> myList;
+    private DefaultListModel<String> listModel;
+    private JScrollPane scrollPane;
     public Interfaz() {
         setTitle("CRUD");
         setSize(450, 350);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+
         menuBar = new JMenuBar();
         fileMenu = new JMenu("Archivo");
 
@@ -50,6 +55,7 @@ public class Interfaz extends JFrame implements ActionListener{
         setVisible(true);
 
         addFriend= new AddFriend();
+        displayFriends = new DisplayFriends();
 
         inicio();
     }
@@ -75,9 +81,39 @@ public class Interfaz extends JFrame implements ActionListener{
         contenedor.add(numeroAmigoCF);
 
         crear = new JButton("Crear");
-        crear.setBounds(170,160,100,23);
+        crear.setBounds(180,160,100,23);
         crear.addActionListener(this);
         contenedor.add(crear);
+
+        listModel = new DefaultListModel<>();
+        myList = new JList<>(listModel);
+
+        scrollPane = new JScrollPane(myList);
+        scrollPane.setBounds(10, 10, 200, 270);
+        contenedor.add(scrollPane);
+        myList.setVisible(false);
+        scrollPane.setVisible(false);
+
+        informacion = new JLabel("Informacion");
+        informacion.setBounds(295,10,100,23);
+        informacion.setVisible(false);
+        contenedor.add(informacion);
+
+        nombreAmigoR = new JLabel("Nombre: ");
+        nombreAmigoR.setBounds(230,50,200,23);
+        nombreAmigoR.setVisible(false);
+        contenedor.add(nombreAmigoR);
+
+        numeroAmigoR = new JLabel("Numero: ");
+        numeroAmigoR.setBounds(230,100,200,23);
+        numeroAmigoR.setVisible(false);
+        contenedor.add(numeroAmigoR);
+
+        mostrar = new JButton("Mostrar Informacion");
+        mostrar.addActionListener(this);
+        mostrar.setBounds(220,180,200,23);
+        mostrar.setVisible(false);
+        contenedor.add(mostrar);
     }
 
     @Override
@@ -100,11 +136,50 @@ public class Interfaz extends JFrame implements ActionListener{
             numeroAmigoCF.setText("");
             numeroAmigoCF.setVisible(true);
             crear.setVisible(true);
+
+            myList.setVisible(false);
+            scrollPane.setVisible(false);
+            informacion.setVisible(false);
+            nombreAmigoR.setVisible(false);
+            numeroAmigoR.setVisible(false);
+            mostrar.setVisible(false);
+
+        }else if(e.getSource() == readItem){
+            nombreAmigoC.setVisible(false);
+            nombreAmigoCF.setVisible(false);
+            numeroAmigoC.setVisible(false);
+            numeroAmigoCF.setVisible(false);
+            crear.setVisible(false);
+
+            myList.setVisible(true);
+            scrollPane.setVisible(true);
+            informacion.setVisible(true);
+            nombreAmigoR.setVisible(true);
+            nombreAmigoR.setText("Nombre: ");
+            numeroAmigoR.setText("Numero: ");
+            numeroAmigoR.setVisible(true);
+            mostrar.setVisible(true);
+
+            cargarInfo();
+        } else if (e.getSource() == mostrar) {
+            String nombre = myList.getSelectedValue();
+            String telefono = displayFriends.obtenerTelefono(nombre);
+            nombreAmigoR.setText("Nombre: "+nombre);
+            numeroAmigoR.setText("Numero: "+telefono);
+        }
+    }
+
+    private void cargarInfo(){
+        listModel.clear();
+        ArrayList<String> listaAmigos= displayFriends.listaAmigos();
+        String nombre;
+        for (String amigo : listaAmigos) {
+            nombre = amigo.split("!")[0];
+            listModel.addElement(nombre);
         }
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Interfaz::new);
     }
-
 }
