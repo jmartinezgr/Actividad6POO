@@ -38,12 +38,10 @@ public class DisplayFriends {
                     return datos[1];
                 }
             }
-
             accesoArchivo.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 }

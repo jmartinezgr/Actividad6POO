@@ -27,7 +27,7 @@ public class AddFriend {
 
                 String[] lineSplit = linea.split("!");
 
-                if(nuevoNombre.equals(lineSplit[0]) || nuevoTelefono.equals(lineSplit[1])){
+                if (lineSplit.length == 2 && (nuevoNombre.equals(lineSplit[0]) || nuevoTelefono.equals(lineSplit[1]))) {
                     flag = true;
                     break;
                 }

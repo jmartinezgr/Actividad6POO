@@ -2,6 +2,7 @@ package Interfaz;
 
 import Operaciones.AddFriend;
 import Operaciones.DisplayFriends;
+import Operaciones.UpdateFriend;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,17 +15,19 @@ public class Interfaz extends JFrame implements ActionListener{
     private JMenu fileMenu;
     private JMenuItem createItem,readItem, updateItem,deleteItem;
     private Container contenedor;
-
     private JLabel nombreAmigoC,numeroAmigoC,nombreAmigoR,numeroAmigoR,informacion;
     private JTextField nombreAmigoCF,numeroAmigoCF;
     private AddFriend addFriend;
     private DisplayFriends displayFriends;
-    private JButton crear,mostrar;
+
+    private UpdateFriend updateFriend;
+    private JButton crear,mostrar,update;
     private JList<String> myList;
     private DefaultListModel<String> listModel;
     private JScrollPane scrollPane;
+
     public Interfaz() {
-        setTitle("CRUD");
+        setTitle("CRUD-ADD");
         setSize(450, 350);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -56,6 +59,7 @@ public class Interfaz extends JFrame implements ActionListener{
 
         addFriend= new AddFriend();
         displayFriends = new DisplayFriends();
+        updateFriend = new UpdateFriend();
 
         inicio();
     }
@@ -75,7 +79,6 @@ public class Interfaz extends JFrame implements ActionListener{
         numeroAmigoC = new JLabel("Numero:");
         numeroAmigoC.setBounds(100,100,80,23);
         contenedor.add(numeroAmigoC);
-
         numeroAmigoCF = new JTextField();
         numeroAmigoCF.setBounds(190,100,150,23);
         contenedor.add(numeroAmigoCF);
@@ -114,6 +117,12 @@ public class Interfaz extends JFrame implements ActionListener{
         mostrar.setBounds(220,180,200,23);
         mostrar.setVisible(false);
         contenedor.add(mostrar);
+
+        update = new JButton("Actualizar");
+        update.addActionListener(this);
+        update.setBounds(180,160,100,23);
+        update.setVisible(false);
+        contenedor.add(update);
     }
 
     @Override
@@ -121,6 +130,7 @@ public class Interfaz extends JFrame implements ActionListener{
         if(e.getSource()==crear){
             String nombre = nombreAmigoCF.getText();
             String numero = numeroAmigoCF.getText();
+            setTitle("CRUD-ADD");
             if(addFriend.crearAmigo(nombre,numero)){
                 JOptionPane.showMessageDialog(this,nombre+ " ha sido creado con exito!", "Creacion Exitosa", JOptionPane.INFORMATION_MESSAGE);
                 nombreAmigoCF.setText("");
@@ -136,6 +146,9 @@ public class Interfaz extends JFrame implements ActionListener{
             numeroAmigoCF.setText("");
             numeroAmigoCF.setVisible(true);
             crear.setVisible(true);
+            update.setVisible(false);
+            numeroAmigoCF.setText("");
+            nombreAmigoCF.setText("");
 
             myList.setVisible(false);
             scrollPane.setVisible(false);
@@ -144,12 +157,15 @@ public class Interfaz extends JFrame implements ActionListener{
             numeroAmigoR.setVisible(false);
             mostrar.setVisible(false);
 
+            setTitle("CRUD-READ");
+
         }else if(e.getSource() == readItem){
             nombreAmigoC.setVisible(false);
             nombreAmigoCF.setVisible(false);
             numeroAmigoC.setVisible(false);
             numeroAmigoCF.setVisible(false);
             crear.setVisible(false);
+            update.setVisible(false);
 
             myList.setVisible(true);
             scrollPane.setVisible(true);
@@ -166,6 +182,31 @@ public class Interfaz extends JFrame implements ActionListener{
             String telefono = displayFriends.obtenerTelefono(nombre);
             nombreAmigoR.setText("Nombre: "+nombre);
             numeroAmigoR.setText("Numero: "+telefono);
+        }else if(e.getSource() == updateItem){
+            setTitle("CRUD-UPDATE");
+            nombreAmigoC.setVisible(true);
+            nombreAmigoCF.setVisible(true);
+            numeroAmigoC.setVisible(true);
+            numeroAmigoCF.setVisible(true);
+            update.setVisible(true);
+            crear.setVisible(false);
+
+            myList.setVisible(false);
+            scrollPane.setVisible(false);
+            informacion.setVisible(false);
+            nombreAmigoR.setVisible(false);
+            numeroAmigoR.setVisible(false);
+            mostrar.setVisible(false);
+        } else if (e.getSource() == update) {
+            String nombre = nombreAmigoCF.getText();
+            String numero = numeroAmigoCF.getText();
+            if(updateFriend.updateFriend(nombre,numero)){
+                JOptionPane.showMessageDialog(this,nombre+ " ha sido actualizo con exito!", "Actualizacion Exitosa", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(this,"No existe un amigo con esas credenciales", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            numeroAmigoCF.setText("");
+            nombreAmigoCF.setText("");
         }
     }
 
