@@ -29,7 +29,6 @@ public class UpdateFriend {
 
             if (flag) {
                 accessFile.seek(0);
-
                 while ((nombreNumero = accessFile.readLine()) != null) {
                     String[] linea = nombreNumero.split("!");
 
@@ -40,15 +39,12 @@ public class UpdateFriend {
                     tempAcceso.writeBytes(nombreNumero);
                     tempAcceso.writeBytes(System.lineSeparator());
                 }
-
                 accessFile.setLength(0);
                 tempAcceso.seek(0);
-
                 while ((nombreNumero = tempAcceso.readLine()) != null) {
                     accessFile.writeBytes(nombreNumero);
                     accessFile.writeBytes(System.lineSeparator());
                 }
-
                 tempAcceso.close();
                 accessFile.close();
 

@@ -25,7 +25,6 @@ public class DisplayFriends {
 
         return amigos;
     }
-
     public String obtenerTelefono(String nombre) {
         try {
             File archivo = new File("src/Archivos/friendContact.txt");

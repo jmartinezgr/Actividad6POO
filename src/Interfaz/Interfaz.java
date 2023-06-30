@@ -1,6 +1,7 @@
 package Interfaz;
 
 import Operaciones.AddFriend;
+import Operaciones.DeleteFriend;
 import Operaciones.DisplayFriends;
 import Operaciones.UpdateFriend;
 
@@ -19,9 +20,9 @@ public class Interfaz extends JFrame implements ActionListener{
     private JTextField nombreAmigoCF,numeroAmigoCF;
     private AddFriend addFriend;
     private DisplayFriends displayFriends;
-
+    private DeleteFriend deleteFriend;
     private UpdateFriend updateFriend;
-    private JButton crear,mostrar,update;
+    private JButton crear,mostrar,update,delete;
     private JList<String> myList;
     private DefaultListModel<String> listModel;
     private JScrollPane scrollPane;
@@ -60,6 +61,7 @@ public class Interfaz extends JFrame implements ActionListener{
         addFriend= new AddFriend();
         displayFriends = new DisplayFriends();
         updateFriend = new UpdateFriend();
+        deleteFriend = new DeleteFriend();
 
         inicio();
     }
@@ -123,6 +125,12 @@ public class Interfaz extends JFrame implements ActionListener{
         update.setBounds(180,160,100,23);
         update.setVisible(false);
         contenedor.add(update);
+
+        delete = new JButton("Eliminar");
+        delete.addActionListener(this);
+        delete.setBounds(280,130,100,23);
+        delete.setVisible(false);
+        contenedor.add(delete);
     }
 
     @Override
@@ -150,6 +158,7 @@ public class Interfaz extends JFrame implements ActionListener{
             numeroAmigoCF.setText("");
             nombreAmigoCF.setText("");
 
+            delete.setVisible(false);
             myList.setVisible(false);
             scrollPane.setVisible(false);
             informacion.setVisible(false);
@@ -157,9 +166,10 @@ public class Interfaz extends JFrame implements ActionListener{
             numeroAmigoR.setVisible(false);
             mostrar.setVisible(false);
 
-            setTitle("CRUD-READ");
+            setTitle("CRUD-ADD");
 
         }else if(e.getSource() == readItem){
+            setTitle("CRUD-READ");
             nombreAmigoC.setVisible(false);
             nombreAmigoCF.setVisible(false);
             numeroAmigoC.setVisible(false);
@@ -175,6 +185,7 @@ public class Interfaz extends JFrame implements ActionListener{
             numeroAmigoR.setText("Numero: ");
             numeroAmigoR.setVisible(true);
             mostrar.setVisible(true);
+            delete.setVisible(false);
 
             cargarInfo();
         } else if (e.getSource() == mostrar) {
@@ -182,6 +193,7 @@ public class Interfaz extends JFrame implements ActionListener{
             String telefono = displayFriends.obtenerTelefono(nombre);
             nombreAmigoR.setText("Nombre: "+nombre);
             numeroAmigoR.setText("Numero: "+telefono);
+            setTitle("CRUD-READ");
         }else if(e.getSource() == updateItem){
             setTitle("CRUD-UPDATE");
             nombreAmigoC.setVisible(true);
@@ -197,6 +209,7 @@ public class Interfaz extends JFrame implements ActionListener{
             nombreAmigoR.setVisible(false);
             numeroAmigoR.setVisible(false);
             mostrar.setVisible(false);
+            delete.setVisible(false);
         } else if (e.getSource() == update) {
             String nombre = nombreAmigoCF.getText();
             String numero = numeroAmigoCF.getText();
@@ -207,9 +220,36 @@ public class Interfaz extends JFrame implements ActionListener{
             }
             numeroAmigoCF.setText("");
             nombreAmigoCF.setText("");
+            setTitle("CRUD-UPDATE");
+        } else if (e.getSource() == deleteItem) {
+            setTitle("CRUD-DELETE");
+
+            myList.setVisible(true);
+            scrollPane.setVisible(true);
+            delete.setVisible(true);
+
+            informacion.setVisible(false);
+            nombreAmigoR.setVisible(false);
+            numeroAmigoR.setVisible(false);
+            mostrar.setVisible(false);
+            nombreAmigoC.setVisible(false);
+            nombreAmigoCF.setVisible(false);
+            numeroAmigoC.setVisible(false);
+            numeroAmigoCF.setVisible(false);
+            update.setVisible(false);
+            crear.setVisible(false);
+
+            cargarInfo();
+        } else if (e.getSource() == delete) {
+            String nombre = myList.getSelectedValue();
+            if(deleteFriend.eliminarAmigo(nombre)){
+                JOptionPane.showMessageDialog(this,nombre+ " ha sido eliminado!", "Actualizacion Exitosa", JOptionPane.INFORMATION_MESSAGE);
+                cargarInfo();
+            }else{
+                JOptionPane.showMessageDialog(this,"No se ha podido eliminar el amigo", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
-
     private void cargarInfo(){
         listModel.clear();
         ArrayList<String> listaAmigos= displayFriends.listaAmigos();
@@ -218,9 +258,5 @@ public class Interfaz extends JFrame implements ActionListener{
             nombre = amigo.split("!")[0];
             listModel.addElement(nombre);
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Interfaz::new);
     }
 }
